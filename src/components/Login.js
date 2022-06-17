@@ -7,6 +7,7 @@ import {
   Typography,
 } from '@mui/material';
 import React from 'react';
+import { createAPIEndpoint, ENDPOINTS } from '../api';
 import useForm from '../hooks/useForm';
 import Center from './Center';
 
@@ -21,6 +22,10 @@ function Login() {
   const login = (e) => {
     e.preventDefault();
     if (validate()) {
+      createAPIEndpoint(ENDPOINTS.participant)
+        .post(values)
+        .then((res) => console.log(res))
+        .catch((err) => console.log(err));
       console.log(values);
     }
   };
