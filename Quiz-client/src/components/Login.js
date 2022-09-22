@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import {
   TextField,
   Button,
@@ -6,7 +7,6 @@ import {
   CardContent,
   Typography,
 } from '@mui/material';
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createAPIEndpoint, ENDPOINTS } from '../api';
 import useForm from '../hooks/useForm';
@@ -18,11 +18,15 @@ const getFreshModel = () => ({
   email: '',
 });
 function Login() {
-  const { context, setContext } = useStateContext();
+  const { context, setContext, resetContext } = useStateContext();
   const navigate = useNavigate();
 
   const { values, setValues, errors, setErrors, handleInputChange } =
     useForm(getFreshModel);
+
+  useEffect(() => {
+    resetContext();
+  }, []);
 
   const login = (e) => {
     e.preventDefault();
@@ -61,7 +65,7 @@ function Login() {
               },
             }}
           >
-            <form noValidate autoComplete="off" onSubmit={login}>
+            <form noValidate autoComplete="on" onSubmit={login}>
               <TextField
                 label="Email"
                 name="email"
