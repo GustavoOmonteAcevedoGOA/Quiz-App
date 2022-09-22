@@ -7,8 +7,10 @@ import {
   Typography,
 } from '@mui/material';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { createAPIEndpoint, ENDPOINTS } from '../api';
 import useForm from '../hooks/useForm';
+import useStateContext from '../hooks/useStateContext';
 import Center from './Center';
 
 const getFreshModel = () => ({
@@ -16,6 +18,9 @@ const getFreshModel = () => ({
   email: '',
 });
 function Login() {
+  const { context, setContext } = useStateContext();
+  const navigate = useNavigate();
+
   const { values, setValues, errors, setErrors, handleInputChange } =
     useForm(getFreshModel);
 
@@ -24,7 +29,10 @@ function Login() {
     if (validate()) {
       createAPIEndpoint(ENDPOINTS.participant)
         .post(values)
-        .then((res) => console.log(res))
+        .then((res) => {
+          setContext({ participantId: res.data.participantId });
+          navigate('/quiz');
+        })
         .catch((err) => console.log(err));
       console.log(values);
     }
