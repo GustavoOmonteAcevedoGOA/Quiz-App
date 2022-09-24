@@ -38,7 +38,6 @@ function Login() {
           navigate('/quiz');
         })
         .catch((err) => console.log(err));
-      console.log(values);
     }
   };
 
