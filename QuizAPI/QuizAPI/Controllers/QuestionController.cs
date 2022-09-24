@@ -24,10 +24,10 @@ namespace QuizAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Question>>> GetQuestions()
         {
-          if (_context.Questions == null)
-          {
-              return NotFound();
-          }
+            if (_context.Questions == null)
+            {
+                return NotFound();
+            }
             var random5Qns = await (_context.Questions.Select(x => new
             {
                 QnId = x.QnId,
@@ -45,10 +45,10 @@ namespace QuizAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Question>> GetQuestion(int id)
         {
-          if (_context.Questions == null)
-          {
-              return NotFound();
-          }
+            if (_context.Questions == null)
+            {
+                return NotFound();
+            }
             var question = await _context.Questions.FindAsync(id);
 
             if (question == null)
@@ -90,19 +90,28 @@ namespace QuizAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Questions
+        // POST: api/Questions/GetAnswers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Question>> PostQuestion(Question question)
+        [Route("GetAnswers")]
+        public async Task<ActionResult<Question>> RetrieveAnswers(int[] qnIds)
         {
-          if (_context.Questions == null)
-          {
-              return Problem("Entity set 'QuizDbContext.Questions'  is null.");
-          }
-            _context.Questions.Add(question);
-            await _context.SaveChangesAsync();
+            if (_context.Questions == null)
+            {
+                return Problem("Entity set 'QuizDbContext.Questions'  is null.");
+            }
+            var asnwers = await (_context.Questions
+                .Where(x => qnIds.Contains(x.QnId))
+                .Select(y => new
+            {
+                QnId = y.QnId,
+                QnInWords = y.QnInWords,
+                ImageName = y.ImageName,
+                Options = new string[] { y.Option1, y.Option2, y.Option3, y.Option4 },
+                Answer = y.Answer
+            })).ToListAsync();
 
-            return CreatedAtAction("GetQuestion", new { id = question.QnId }, question);
+            return Ok(asnwers);
         }
 
         // DELETE: api/Questions/5
